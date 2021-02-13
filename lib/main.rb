@@ -10,3 +10,8 @@
 # recursively do the following steps:
 # calculate mid of left subarray and make it root of left subtree of A.
 # calculate mid of right subarray and make it root of right subtree of A.
+
+require_relative 'tree.rb'
+
+tree = Tree.new([1,2,3,4,5,6,7,8,9])
+p tree
