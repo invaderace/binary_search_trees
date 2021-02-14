@@ -10,12 +10,6 @@ class Tree
     @root = build_tree(array.sort.uniq, first = 0, last = array.length - 1 )
   end
 
-  # initialize start = 0, end = length of the array - 1
-  # mid = (start+end)/2
-  # create a tree node with mid as root (lets call it A)
-  # recursively do the following steps:
-  # calculate mid of left subarray and make it root of left subtree of A.
-  # calculate mid of right subarray and make it root of right subtree of A.
   def build_tree(array, first, last)
     return nil if first > last || array[first].nil?
 
@@ -28,6 +22,7 @@ class Tree
 
   def insert(value, comparing = @root)
     return @root = Node.new(value) if comparing.nil?
+
     return nil if value == comparing
 
     if value < comparing.value
@@ -37,7 +32,38 @@ class Tree
     end
   end
 
-  def delete(value)
+  def delete(value, comparing = root)
+    return @root if comparing.nil?
+
+    if value < comparing.value
+      comparing.left = delete(value, comparing.left)
+    elsif value > comparing.value
+      comparing.right = delete(value, comparing.right)
+    else
+      # the values are equal, so it needs deleted.
+      return comparing.right if comparing.left.nil?
+        # temp = comparing.right # even if right is nil, it's ok bc the new value will be nil
+        # comparing = nil # i.e. delete
+        # return temp # either the node, or nil.
+      return comparing.left if comparing.right.nil?
+        # temp = comparing.left # same as above.
+        # comparing = nil
+        # return temp
+      # else
+        # two children, find the smallest value node on the right.
+        # look to the right, find the leftmost until it's nil.
+        temp = leftmost(comparing.right)
+        comparing.value = temp.value
+        comparing.right = delete(temp.value, comparing.right)
+      # end
+    end
+    binding.pry
+    return comparing
+  end
+
+  def leftmost(node)
+    node = node.left until node.left.nil?
+    node
   end
 
   def find(value)
