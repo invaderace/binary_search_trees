@@ -57,7 +57,6 @@ class Tree
         comparing.right = delete(temp.value, comparing.right)
       # end
     end
-    binding.pry
     return comparing
   end
 
@@ -66,7 +65,20 @@ class Tree
     node
   end
 
-  def find(value)
+  def find(value, comparing = @root)
+
+    if value < comparing.value
+      # go left
+      find(value, comparing.left)
+    elsif value > comparing.value
+      # go right
+      find(value, comparing.right)
+    elsif value.eql? comparing.value
+      # return the Node
+      return comparing
+    end
+
+
   end
 
   def level_order
@@ -91,5 +103,11 @@ class Tree
   end
 
   def rebalance
+  end
+
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 end
