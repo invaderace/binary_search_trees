@@ -66,7 +66,6 @@ class Tree
   end
 
   def find(value, comparing = @root)
-
     if value < comparing.value
       # go left
       find(value, comparing.left)
@@ -77,11 +76,38 @@ class Tree
       # return the Node
       return comparing
     end
-
-
   end
 
-  def level_order
+  def level_order(node = @root)
+    # store root in queue.
+    # visit it.
+    # enqueue left child, right child.
+    # visits left, queue children.
+    # visit right, queue children.
+    # visit and queue, in order of queue (left to right)
+
+    # if root is null, return
+    return if node.nil?
+
+    level_order = []
+    # create queue pointer to null
+    # push root/node into enqueue
+    queue = []
+    queue.push(node)
+
+    # while queue is not empty
+    until queue == []
+      # take a node from the front.
+      # read that data.
+      node = queue[0]
+      # if left isn't null, insert into the queue.
+      queue.push(node.left) unless node.left.nil?
+      # if right isn't null, insert into the queue.
+      queue.push(node.right) unless node.right.nil?
+      # remove/pop element from front.
+      level_order.push(queue.shift().value)
+    end
+    level_order
   end
 
   def inorder
