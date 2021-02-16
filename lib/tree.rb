@@ -119,10 +119,24 @@ class Tree
     array
   end
 
-  def preorder
+  def preorder(node = @root, array = [])
+    return if node.nil?
+
+    # binding.pry
+    array.push(node.value)
+    # binding.pry
+    preorder(node.left, array)
+    preorder(node.right, array)
+    array
   end
 
-  def postorder
+  def postorder(node = @root, array = [])
+    return if node.nil?
+
+    postorder(node.left, array)
+    postorder(node.right, array)
+    array.push(node.value)
+    array
   end
 
   def height(node)
