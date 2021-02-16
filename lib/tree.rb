@@ -140,6 +140,15 @@ class Tree
   end
 
   def height(node)
+    return -1 if node.nil?
+
+    leftheight = height(node.left)
+    rightheight = height(node.right)
+    return max(leftheight, rightheight) + 1
+  end
+
+  def max(a, b)
+    a > b ? a : b
   end
 
   def depth(node)
