@@ -110,7 +110,13 @@ class Tree
     level_order
   end
 
-  def inorder
+  def inorder(node = @root, array = [])
+    return if node.nil?
+
+    inorder(node.left, array)
+    array.push(node.value)
+    inorder(node.right, array)
+    array
   end
 
   def preorder
