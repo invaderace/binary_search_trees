@@ -151,7 +151,16 @@ class Tree
     a > b ? a : b
   end
 
-  def depth(node)
+  def depth(node, parent = @root, depth = 0)
+    return if node.nil?
+
+    return depth if node.value.eql? parent.value
+
+    if node.value < parent.value
+      depth(node, parent.left, depth + 1)
+    elsif node.value > parent.value
+      depth(node, parent.right, depth + 1)
+    end
   end
 
   def balanced?
