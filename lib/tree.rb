@@ -163,7 +163,16 @@ class Tree
     end
   end
 
-  def balanced?
+  def balanced?(node = @root, lh = '', rh = '')
+    # binding.pry
+    return true if node.nil?
+
+    lh = height(node.left)
+    rh = height(node.right)
+    # binding.pry
+    return true if (lh - rh).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+    # binding.pry
+    return false
   end
 
   def rebalance
