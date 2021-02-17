@@ -7,7 +7,7 @@ class Tree
   attr_accessor :root
 
   def initialize(array)
-    @root = build_tree(array.sort.uniq, first = 0, last = array.length - 1 )
+    @root = build_tree(array.sort.uniq, first = 0, last = array.length - 1)
   end
 
   def build_tree(array, first, last)
@@ -175,7 +175,8 @@ class Tree
     return false
   end
 
-  def rebalance
+  def rebalance(tree = @root)
+    @root = build_tree(inorder(tree), 0, inorder(tree).length - 1)
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
