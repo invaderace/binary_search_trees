@@ -1,13 +1,14 @@
 # frozen_string_literal: true
-require 'pry'
 
 require_relative 'node.rb'
 
+# accepts an array when initialized and builds a balanced binary search tree.
 class Tree
   attr_accessor :root
 
   def initialize(array)
-    @root = build_tree(array.sort.uniq, first = 0, last = array.length - 1)
+    array = array.sort.uniq
+    @root = build_tree(array, 0, array.length - 1)
   end
 
   def build_tree(array, first, last)
@@ -21,9 +22,9 @@ class Tree
   end
 
   def insert(value, comparing = @root)
-    return @root = Node.new(value) if comparing.nil?
+    return comparing = Node.new(value) if comparing.nil?
 
-    return nil if value == comparing
+    return nil if value == comparing.value
 
     if value < comparing.value
       comparing.left.nil? ? comparing.left = Node.new(value) : insert(value, comparing.left)
@@ -32,7 +33,7 @@ class Tree
     end
   end
 
-  def delete(value, comparing = root)
+  def delete(value, comparing = @root)
     return @root if comparing.nil?
 
     if value < comparing.value
@@ -42,22 +43,15 @@ class Tree
     else
       # the values are equal, so it needs deleted.
       return comparing.right if comparing.left.nil?
-        # temp = comparing.right # even if right is nil, it's ok bc the new value will be nil
-        # comparing = nil # i.e. delete
-        # return temp # either the node, or nil.
+
       return comparing.left if comparing.right.nil?
-        # temp = comparing.left # same as above.
-        # comparing = nil
-        # return temp
-      # else
-        # two children, find the smallest value node on the right.
-        # look to the right, find the leftmost until it's nil.
-        temp = leftmost(comparing.right)
-        comparing.value = temp.value
-        comparing.right = delete(temp.value, comparing.right)
-      # end
+
+      # look to the right, find the leftmost until it's nil.
+      temp = leftmost(comparing.right)
+      comparing.value = temp.value
+      comparing.right = delete(temp.value, comparing.right)
     end
-    return comparing
+    comparing
   end
 
   def leftmost(node)
@@ -74,38 +68,25 @@ class Tree
       find(value, comparing.right)
     elsif value.eql? comparing.value
       # return the Node
-      return comparing
+      comparing
     end
   end
 
   def level_order(node = @root)
-    # store root in queue.
-    # visit it.
-    # enqueue left child, right child.
-    # visits left, queue children.
-    # visit right, queue children.
-    # visit and queue, in order of queue (left to right)
-
-    # if root is null, return
     return if node.nil?
 
     level_order = []
-    # create queue pointer to null
-    # push root/node into enqueue
-    queue = []
-    queue.push(node)
-
+    # create queue pointer to null. root/node into enqueue.
+    queue = [node]
     # while queue is not empty
     until queue == []
-      # take a node from the front.
-      # read that data.
+      # take a node from the front. read that data.
       node = queue[0]
-      # if left isn't null, insert into the queue.
+      # if left/right child isn't null, insert into the queue.
       queue.push(node.left) unless node.left.nil?
-      # if right isn't null, insert into the queue.
       queue.push(node.right) unless node.right.nil?
       # remove/pop element from front.
-      level_order.push(queue.shift().value)
+      level_order.push(queue.shift.value)
     end
     level_order
   end
@@ -122,9 +103,7 @@ class Tree
   def preorder(node = @root, array = [])
     return if node.nil?
 
-    # binding.pry
     array.push(node.value)
-    # binding.pry
     preorder(node.left, array)
     preorder(node.right, array)
     array
@@ -144,11 +123,11 @@ class Tree
 
     leftheight = height(node.left)
     rightheight = height(node.right)
-    return max(leftheight, rightheight) + 1
+    max(leftheight, rightheight) + 1
   end
 
-  def max(a, b)
-    a > b ? a : b
+  def max(val_a, val_b)
+    val_a > val_b ? val_a : val_b
   end
 
   def depth(node, parent = @root, depth = 0)
@@ -163,16 +142,15 @@ class Tree
     end
   end
 
-  def balanced?(node = @root, lh = '', rh = '')
-    # binding.pry
+  def balanced?(node = @root)
     return true if node.nil?
 
-    lh = height(node.left)
-    rh = height(node.right)
-    # binding.pry
-    return true if (lh - rh).abs <= 1 && balanced?(node.left) && balanced?(node.right)
-    # binding.pry
-    return false
+    left_height = height(node.left)
+    right_height = height(node.right)
+
+    return true if (left_height - right_height).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+
+    false
   end
 
   def rebalance(tree = @root)
