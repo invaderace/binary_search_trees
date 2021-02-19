@@ -2,6 +2,7 @@
 
 require_relative 'node.rb'
 
+# rubocop:disable Metrics/ClassLength
 # accepts an array when initialized and builds a balanced binary search tree.
 class Tree
   attr_accessor :root
@@ -15,43 +16,63 @@ class Tree
     return nil if first > last || array[first].nil?
 
     mid = (first + last) / 2
-    root_node = Node.new(array[mid])
-    root_node.left = build_tree(array, first, mid - 1)
-    root_node.right = build_tree(array, mid + 1, last)
-    root_node
+    node = Node.new(array[mid])
+    node.left = build_tree(array, first, mid - 1)
+    node.right = build_tree(array, mid + 1, last)
+    node
   end
 
-  def insert(value, comparing = @root)
-    return comparing = Node.new(value) if comparing.nil?
+  def insert(value, node = @root)
+    return node = Node.new(value) if node.nil?
 
-    return nil if value == comparing.value
+    return nil if value == node.value
 
-    if value < comparing.value
-      comparing.left.nil? ? comparing.left = Node.new(value) : insert(value, comparing.left)
-    elsif value > comparing.value
-      comparing.right.nil? ? comparing.right = Node.new(value) : insert(value, comparing.right)
-    end
+    direction = direction(value, node)
+    direction == 'left' ? insert_left(value, node) : insert_right(value, node)
   end
 
-  def delete(value, comparing = @root)
-    return @root if comparing.nil?
+  def insert_left(value, node)
+    node.left.nil? ? node.left = Node.new(value) : insert(value, node.left)
+  end
 
-    if value < comparing.value
-      comparing.left = delete(value, comparing.left)
-    elsif value > comparing.value
-      comparing.right = delete(value, comparing.right)
+  def insert_right(value, node)
+    node.right.nil? ? node.right = Node.new(value) : insert(value, node.right)
+  end
+
+  def delete(value, node = @root)
+    return @root if node.nil?
+
+    if value != node.value
+      direction = direction(value, node)
+      direction == 'left' ? delete_left(value, node) : delete_right(value, node)
     else
       # the values are equal, so it needs deleted.
-      return comparing.right if comparing.left.nil?
+      return node.right if node.left.nil?
 
-      return comparing.left if comparing.right.nil?
+      return node.left if node.right.nil?
 
       # look to the right, find the leftmost until it's nil.
-      temp = leftmost(comparing.right)
-      comparing.value = temp.value
-      comparing.right = delete(temp.value, comparing.right)
+      swap_right(node)
     end
-    comparing
+    node
+  end
+
+  def direction(value, node)
+    value < node.value ? 'left' : 'right'
+  end
+
+  def delete_left(value, node)
+    node.left = delete(value, node.left)
+  end
+
+  def delete_right(value, node)
+    node.right = delete(value, node.right)
+  end
+
+  def swap_right(node)
+    temp = leftmost(node.right)
+    node.value = temp.value
+    node.right = delete(temp.value, node.right)
   end
 
   def leftmost(node)
@@ -59,17 +80,11 @@ class Tree
     node
   end
 
-  def find(value, comparing = @root)
-    if value < comparing.value
-      # go left
-      find(value, comparing.left)
-    elsif value > comparing.value
-      # go right
-      find(value, comparing.right)
-    elsif value.eql? comparing.value
-      # return the Node
-      comparing
-    end
+  def find(value, node = @root)
+    return node if value.eql? node.value
+
+    direction = direction(value, node)
+    direction == 'left' ? find(value, node.left) : find(value, node.right)
   end
 
   def level_order(node = @root)
@@ -163,3 +178,4 @@ class Tree
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 end
+# rubocop:enable Metrics/ClassLength

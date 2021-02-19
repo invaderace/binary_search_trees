@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative 'tree.rb'
 
-tree = Tree.new( Array.new(15) { rand(100) } )
+tree = Tree.new(Array.new(15) { rand(100) })
 tree.pretty_print
 puts
 

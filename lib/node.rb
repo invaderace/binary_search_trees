@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# a node class that stores data and left and right children.
 class Node
   attr_accessor :value, :left, :right
 
